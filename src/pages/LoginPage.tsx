@@ -1,5 +1,5 @@
 import { useState, FormEvent } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import './LoginPage.css';
 
@@ -61,9 +61,6 @@ export default function LoginPage() {
           <button type="submit" className="btn btn-primary login-btn" disabled={loading}>
             {loading ? 'מתחבר...' : 'התחברות'}
           </button>
-          <div className="register-link">
-            אין לך חשבון? <Link to="/register">הירשם כאן</Link>
-          </div>
         </form>
       </div>
     </div>
