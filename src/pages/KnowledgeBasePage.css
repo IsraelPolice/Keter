@@ -121,62 +121,89 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   padding: var(--spacing-lg);
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .modal-content {
-  background: var(--keter-white);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-2xl);
-  max-width: 800px;
+  background: #ffffff;
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-3xl);
+  max-width: 900px;
   width: 100%;
-  max-height: 90vh;
+  max-height: 85vh;
   overflow-y: auto;
   position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .modal-close {
   position: absolute;
-  top: var(--spacing-md);
-  left: var(--spacing-md);
-  font-size: 2rem;
-  color: var(--keter-dark-gray);
-  background: none;
+  top: var(--spacing-lg);
+  left: var(--spacing-lg);
+  font-size: 2.5rem;
+  color: #1f2937;
+  background: #f3f4f6;
   border: none;
   cursor: pointer;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
   transition: all 0.2s;
+  font-weight: 300;
+  line-height: 1;
 }
 
 .modal-close:hover {
-  background: var(--keter-light-gray);
-  color: var(--keter-red);
+  background: #e5e7eb;
+  color: #111827;
+  transform: rotate(90deg);
 }
 
 .modal-content h2 {
-  margin: var(--spacing-lg) 0;
-  color: var(--keter-black);
-  font-size: 2rem;
+  margin: 0 0 var(--spacing-xl) 0;
+  color: #0f172a;
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.2;
 }
 
 .article-content {
-  line-height: 1.8;
-  color: var(--keter-black);
-  margin: var(--spacing-xl) 0;
+  line-height: 1.9;
+  color: #1e293b;
+  margin: var(--spacing-2xl) 0;
+  font-size: 1.125rem;
 }
 
 .article-content p {
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  color: #334155;
 }
 
 @media (max-width: 768px) {
