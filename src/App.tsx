@@ -50,7 +50,7 @@ function AppRoutes() {
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <BrowserRouter basename="/Keter">
         <AppRoutes />
       </BrowserRouter>
     </AuthProvider>
