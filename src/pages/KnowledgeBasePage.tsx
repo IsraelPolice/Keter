@@ -10,6 +10,10 @@ export default function KnowledgeBasePage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [loading, setLoading] = useState(true);
   const [selectedArticle, setSelectedArticle] = useState<KnowledgeArticle | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState<Partial<KnowledgeArticle>>({});
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const categories = [
     { value: 'all', label: 'הכל' },
@@ -64,6 +68,89 @@ export default function KnowledgeBasePage() {
     setFilteredArticles(filtered);
   };
 
+  const handleAddArticle = () => {
+    setEditForm({
+      title: '',
+      content: '',
+      category: 'general',
+      keywords: [],
+      status: 'published'
+    });
+    setShowAddModal(true);
+  };
+
+  const handleEditArticle = (article: KnowledgeArticle) => {
+    setEditForm(article);
+    setIsEditing(true);
+    setSelectedArticle(null);
+  };
+
+  const handleSaveArticle = async () => {
+    if (!editForm.title || !editForm.content) {
+      alert('אנא מלא את כל השדות הנדרשים');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      if (editForm.id) {
+        const { error } = await supabase
+          .from('knowledge_articles')
+          .update({
+            title: editForm.title,
+            content: editForm.content,
+            category: editForm.category,
+            keywords: editForm.keywords,
+            status: editForm.status,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', editForm.id);
+
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('knowledge_articles')
+          .insert({
+            title: editForm.title!,
+            content: editForm.content!,
+            category: editForm.category!,
+            keywords: editForm.keywords || [],
+            status: editForm.status || 'published'
+          });
+
+        if (error) throw error;
+      }
+
+      await loadArticles();
+      setIsEditing(false);
+      setShowAddModal(false);
+      setEditForm({});
+    } catch (error) {
+      console.error('Error saving article:', error);
+      alert('שגיאה בשמירת המאמר');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeleteArticle = async (id: string) => {
+    if (!confirm('האם אתה בטוח שברצונך למחוק מאמר זה?')) return;
+
+    try {
+      const { error } = await supabase
+        .from('knowledge_articles')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      await loadArticles();
+      setSelectedArticle(null);
+    } catch (error) {
+      console.error('Error deleting article:', error);
+      alert('שגיאה במחיקת המאמר');
+    }
+  };
+
   if (loading) {
     return <div className="loading">טוען מאגר ידע...</div>;
   }
@@ -73,6 +160,9 @@ export default function KnowledgeBasePage() {
       <div className="page-header">
         <h1>מאגר ידע כתר</h1>
         <p>כל המידע שאתה צריך במקום אחד</p>
+        <button className="btn btn-primary" onClick={handleAddArticle}>
+          + הוסף מאמר חדש
+        </button>
       </div>
 
       <div className="search-section">
@@ -140,6 +230,72 @@ export default function KnowledgeBasePage() {
               {selectedArticle.keywords.map((keyword, i) => (
                 <span key={i} className="keyword-tag">{keyword}</span>
               ))}
+            </div>
+            <div className="modal-actions">
+              <button className="btn btn-primary" onClick={() => handleEditArticle(selectedArticle)}>
+                ערוך מאמר
+              </button>
+              <button className="btn btn-secondary" onClick={() => handleDeleteArticle(selectedArticle.id)}>
+                מחק מאמר
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {(isEditing || showAddModal) && (
+        <div className="modal-overlay" onClick={() => { setIsEditing(false); setShowAddModal(false); }}>
+          <div className="modal-content edit-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => { setIsEditing(false); setShowAddModal(false); }}>×</button>
+            <h2>{isEditing ? 'ערוך מאמר' : 'מאמר חדש'}</h2>
+            <div className="form-group">
+              <label>כותרת</label>
+              <input
+                type="text"
+                value={editForm.title || ''}
+                onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+                placeholder="הכנס כותרת למאמר"
+              />
+            </div>
+            <div className="form-group">
+              <label>קטגוריה</label>
+              <select
+                value={editForm.category || 'general'}
+                onChange={(e) => setEditForm({ ...editForm, category: e.target.value as any })}
+              >
+                {categories.filter(c => c.value !== 'all').map(cat => (
+                  <option key={cat.value} value={cat.value}>{cat.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label>תוכן</label>
+              <textarea
+                value={editForm.content || ''}
+                onChange={(e) => setEditForm({ ...editForm, content: e.target.value })}
+                placeholder="הכנס את תוכן המאמר"
+                rows={10}
+              />
+            </div>
+            <div className="form-group">
+              <label>מילות מפתח (מופרדות בפסיק)</label>
+              <input
+                type="text"
+                value={editForm.keywords?.join(', ') || ''}
+                onChange={(e) => setEditForm({
+                  ...editForm,
+                  keywords: e.target.value.split(',').map(k => k.trim()).filter(k => k)
+                })}
+                placeholder="מילת מפתח 1, מילת מפתח 2, מילת מפתח 3"
+              />
+            </div>
+            <div className="modal-actions">
+              <button className="btn btn-primary" onClick={handleSaveArticle} disabled={saving}>
+                {saving ? 'שומר...' : 'שמור מאמר'}
+              </button>
+              <button className="btn btn-secondary" onClick={() => { setIsEditing(false); setShowAddModal(false); }}>
+                ביטול
+              </button>
             </div>
           </div>
         </div>

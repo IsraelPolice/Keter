@@ -10,6 +10,9 @@ export default function DashboardPage() {
     scripts: 0,
     simulations: 0
   });
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     loadStats();
@@ -31,11 +34,95 @@ export default function DashboardPage() {
     });
   };
 
+  const handleSearch = async (query: string) => {
+    setSearchQuery(query);
+    if (!query.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const [articles, procedures, scripts] = await Promise.all([
+        supabase
+          .from('knowledge_articles')
+          .select('id, title, content, category')
+          .or(`title.ilike.%${query}%,content.ilike.%${query}%`)
+          .limit(5),
+        supabase
+          .from('procedures')
+          .select('id, title, description')
+          .or(`title.ilike.%${query}%,description.ilike.%${query}%`)
+          .limit(5),
+        supabase
+          .from('conversation_scripts')
+          .select('id, title, scenario')
+          .or(`title.ilike.%${query}%,scenario.ilike.%${query}%`)
+          .limit(5)
+      ]);
+
+      const results = [
+        ...(articles.data || []).map(item => ({ ...item, type: 'article', path: '/knowledge' })),
+        ...(procedures.data || []).map(item => ({ ...item, type: 'procedure', path: '/procedures' })),
+        ...(scripts.data || []).map(item => ({ ...item, type: 'script', path: '/scripts' }))
+      ];
+
+      setSearchResults(results);
+    } catch (error) {
+      console.error('Search error:', error);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const getTypeLabel = (type: string) => {
+    switch (type) {
+      case 'article': return '📚 מאמר';
+      case 'procedure': return '📋 נוהל';
+      case 'script': return '💬 תסריט';
+      default: return '';
+    }
+  };
+
   return (
     <div className="dashboard">
       <div className="dashboard-header">
-        <h1>דף הבית</h1>
-        <p>ברוכים הבאים למערכת מנהלת הידע של כתר</p>
+        <h1>מערכת מנהלת הידע</h1>
+        <p>חפש וגלה מידע בכל המערכת</p>
+      </div>
+
+      <div className="search-section">
+        <div className="search-box-wrapper">
+          <input
+            type="text"
+            className="search-input"
+            placeholder="חפש מאמרים, נהלים, תסריטי שיחה..."
+            value={searchQuery}
+            onChange={(e) => handleSearch(e.target.value)}
+          />
+          {isSearching && <div className="search-spinner">🔍</div>}
+        </div>
+
+        {searchResults.length > 0 && (
+          <div className="search-results">
+            {searchResults.map((result, index) => (
+              <Link
+                key={`${result.type}-${result.id}-${index}`}
+                to={result.path}
+                className="search-result-item card"
+                onClick={() => setSearchResults([])}
+              >
+                <div className="result-type">{getTypeLabel(result.type)}</div>
+                <h4>{result.title}</h4>
+                <p>{result.description || result.scenario || result.content?.substring(0, 100)}</p>
+              </Link>
+            ))}
+          </div>
+        )}
+
+        {searchQuery && !isSearching && searchResults.length === 0 && (
+          <div className="no-results">לא נמצאו תוצאות עבור "{searchQuery}"</div>
+        )}
       </div>
 
       <div className="stats-grid">
