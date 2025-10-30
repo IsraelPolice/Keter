@@ -95,6 +95,23 @@
   font-size: 0.9rem;
 }
 
+.register-link {
+  text-align: center;
+  color: var(--keter-dark-gray);
+  font-size: 0.95rem;
+  margin-top: var(--spacing-sm);
+}
+
+.register-link a {
+  color: var(--keter-red);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 480px) {
   .login-container {
     padding: var(--spacing-lg);
