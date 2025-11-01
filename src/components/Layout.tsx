@@ -10,7 +10,7 @@ export default function Layout() {
       <header className="header">
         <div className="header-content">
           <div className="logo-section">
-            <div className="logo">KETER</div>
+            <img src="/Keter/keter-logo.png" alt="Keter" className="logo-image" />
             <h1 className="app-title">מנהלת ידע</h1>
           </div>
           <nav className="nav">
@@ -28,6 +28,9 @@ export default function Layout() {
             </NavLink>
             <NavLink to="/simulations" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
               סימולציות
+            </NavLink>
+            <NavLink to="/systems" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+              מערכות
             </NavLink>
           </nav>
           <div className="user-section">

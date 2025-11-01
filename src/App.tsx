@@ -6,6 +6,7 @@ import KnowledgeBasePage from './pages/KnowledgeBasePage';
 import ProceduresPage from './pages/ProceduresPage';
 import ConversationScriptsPage from './pages/ConversationScriptsPage';
 import SimulationsPage from './pages/SimulationsPage';
+import SystemsPage from './pages/SystemsPage';
 import Layout from './components/Layout';
 import './styles/global.css';
 
@@ -40,6 +41,7 @@ function AppRoutes() {
         <Route path="procedures" element={<ProceduresPage />} />
         <Route path="scripts" element={<ConversationScriptsPage />} />
         <Route path="simulations" element={<SimulationsPage />} />
+        <Route path="systems" element={<SystemsPage />} />
       </Route>
     </Routes>
   );

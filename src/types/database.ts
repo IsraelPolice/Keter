@@ -75,3 +75,16 @@ export interface SimulationResult {
   answers: Record<string, number>;
   completed_at: string;
 }
+
+export interface System {
+  id: string;
+  name: string;
+  description: string;
+  url: string;
+  category: string;
+  instructions: string;
+  keywords: string[];
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
