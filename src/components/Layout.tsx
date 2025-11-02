@@ -10,7 +10,7 @@ export default function Layout() {
       <header className="header">
         <div className="header-content">
           <div className="logo-section">
-            <img src="/Keter/keter-logo.png" alt="Keter" className="logo-image" />
+            <img src="/keter-logo.png" alt="Keter" className="logo-image" />
             <h1 className="app-title">מנהלת ידע</h1>
           </div>
           <nav className="nav">

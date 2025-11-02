@@ -80,7 +80,7 @@ export function createSmartLinks(
     const regex = new RegExp(`(נוהל\\s+${procedure.title}|${procedure.title})`, 'gi');
     linkedText = linkedText.replace(
       regex,
-      `<a href="/Keter/procedures?id=${procedure.id}" class="smart-link smart-link-procedure" data-type="procedure" data-id="${procedure.id}">$1</a>`
+      `<a href="/procedures?id=${procedure.id}" class="smart-link smart-link-procedure" data-type="procedure" data-id="${procedure.id}">$1</a>`
     );
   });
 
@@ -88,7 +88,7 @@ export function createSmartLinks(
     const regex = new RegExp(`(מערכת\\s+${system.name}|${system.name})`, 'gi');
     linkedText = linkedText.replace(
       regex,
-      `<a href="/Keter/systems?id=${system.id}" class="smart-link smart-link-system" data-type="system" data-id="${system.id}">$1</a>`
+      `<a href="/systems?id=${system.id}" class="smart-link smart-link-system" data-type="system" data-id="${system.id}">$1</a>`
     );
   });
 
@@ -96,7 +96,7 @@ export function createSmartLinks(
     const regex = new RegExp(`(תסריט\\s+${script.title}|${script.title})`, 'gi');
     linkedText = linkedText.replace(
       regex,
-      `<a href="/Keter/scripts?id=${script.id}" class="smart-link smart-link-script" data-type="script" data-id="${script.id}">$1</a>`
+      `<a href="/scripts?id=${script.id}" class="smart-link smart-link-script" data-type="script" data-id="${script.id}">$1</a>`
     );
   });
 
@@ -104,7 +104,7 @@ export function createSmartLinks(
     const regex = new RegExp(`(מאמר\\s+${article.title}|${article.title})`, 'gi');
     linkedText = linkedText.replace(
       regex,
-      `<a href="/Keter/knowledge?id=${article.id}" class="smart-link smart-link-article" data-type="article" data-id="${article.id}">$1</a>`
+      `<a href="/knowledge?id=${article.id}" class="smart-link smart-link-article" data-type="article" data-id="${article.id}">$1</a>`
     );
   });
 
